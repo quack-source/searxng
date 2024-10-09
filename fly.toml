@@ -1,0 +1,43 @@
+app = "quack-searxng"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[deploy]
+  strategy = "canary"
+
+[env]
+  SEARXNG_BASE_URL = "https://searxng.foss.quack.host/"
+
+[[services]]
+  internal_port = 8080
+  force_https = true
+  auto_start_machines = true
+  auto_stop_machines = true
+  min_machines_running = 0
+  protocol = "tcp"
+
+  [services.concurrency]
+    hard_limit = 500
+    soft_limit = 400
+    type = "connections"
+
+ [[services.ports]]
+    handlers = ["http"]
+    port = 80
+    force_https = true
+
+ [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+   [services.ports.http_options.response.headers]
+     Content-Security-Policy = "default-src 'none'; upgrade-insecure-requests; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https:; font-src 'self'; connect-src 'self' https:; form-action 'self'; base-uri 'self'; frame-ancestors 'none'"
+     X-Frame-Options = "DENY"
+     Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+  
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 256
