@@ -5,7 +5,7 @@ primary_region = "iad"
   dockerfile = "Dockerfile"
 
 [deploy]
-  strategy = "canary"
+  strategy = "rolling"
 
 [env]
   SEARXNG_BASE_URL = "https://searxng.foss.quack.host/"
